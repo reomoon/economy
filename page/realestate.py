@@ -63,7 +63,13 @@ def fetch_transaction_volume(region_code, api_key):
     months = get_recent_months()
     start_month = months[0]
     end_month = months[-1]
-    df = tp.read(region_code=region_code, start_month=start_month, end_month=end_month)
+    df = tp.get_data(
+        property_type="아파트",
+        trade_type="매매",
+        sigungu_code=region_code,
+        start_month=start_month,
+        end_month=end_month
+    )
     print(df.head()) # 데이터 구조 확인
 
     # '계약년월' 또는 '월' 컬럼 기준으로 거래량 집계 
