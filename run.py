@@ -1,5 +1,4 @@
 import os
-import json
 from page.realestate import fetch_kbland_indices, fetch_kbland_monthly, fetch_transaction_volume
 
 
@@ -48,7 +47,7 @@ else:
             "44200": "충남 아산시",
             "43113": "청주 흥덕구",
         }
-    
+
 # .env에서 공공데이터 API키 읽기
 from dotenv import load_dotenv
 load_dotenv()
@@ -56,9 +55,10 @@ PUBLICDATA_API_KEY = os.getenv("PUBLICDATA_API_KEY")
 
 # 각 지역별 데이터 수집 및 디버깅
 for code, name in REGION_CODES.items():
+    region_name = name.split()[-1]  # "서울 동작구" → "동작구"
     print(f"[INFO] {name}({code}) 데이터 수집 시작")
-    매매지수, 전세지수 = fetch_kbland_indices(code)
-    monthly_매매지수 = fetch_kbland_monthly(code)
+    매매지수, 전세지수 = fetch_kbland_indices(code, region_name)
+    monthly_매매지수 = fetch_kbland_monthly(code, region_name)
     거래량 = fetch_transaction_volume(code, PUBLICDATA_API_KEY)
     print(f"[DEBUG] {name} 매매지수(8주): {매매지수}")
     print(f"[DEBUG] {name} 전세지수(8주): {전세지수}")

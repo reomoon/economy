@@ -1,66 +1,83 @@
-import os
+import datetime
+import pandas as pd
 import datetime
 from PublicDataReader import Kbland, TransactionPrice
 
 def get_recent_weeks(num_weeks=8):
-    today = datetime.date.today()
+    today = pd.Timestamp.today().replace(day=1)
     weeks = []
     for i in range(num_weeks):
-        week = today - datetime.timedelta(weeks=i)
+        week = today - pd.DateOffset(weeks=i)
         weeks.append(week.strftime("%m-%W"))
     weeks.reverse()
     return weeks
 
 def get_recent_months(num_months=12):
-    today = datetime.date.today().replace(day=1)
+    today = pd.Timestamp.today().replace(day=1)
     months = []
     for i in range(num_months):
-        month = today - datetime.timedelta(days=30 * i)
+        month = today - pd.DateOffset(days=30 * i)
         months.append(month.strftime("%Y-%m"))
     return months
 
-def fetch_kbland_indices(region_code):
+def fetch_kbland_indices(region_code, region_name):
+    # print(f"[DEBUG] fetch_kbland_indices region_code:{region_code}")
     kbland = Kbland()
     df = kbland.get_hai(region_code = region_code)
     print(df.head()) # 데이터 구조 확인용
+    print("날짜 min/max:", df['날짜'].min(), df['날짜'].max())
+    print("지역명:", df['지역명'].unique())
 
-    # '날짜' 기준으로 최근 8개만 추출 (여기서는 '종합'을 매매지수로 사용)
-    recent_df = df.sort_values('날짜', ascending=False).head(8)
+    # 지역명 필터링
+    if region_name:
+        df = df[df['지역명'].str.contains(region_name)]
+
+    # 날짜 컬럼을 datetime으로 변환
+    df['날짜'] = pd.to_datetime(df['날짜'])
+    df['년월'] = df['날짜'].dt.strftime('%Y-%m')
+
+    # 최근 12개월만 추출
+    months = get_recent_months(12)
+    recent_df = df[df['년월'].isin(months)].sort_values('날짜')
+
     매매지수 = []
     전세지수 = []
 
-    for _, row in recent_df.iterrows():
-        매매지수.append({"week": row['날짜'], "value": row['아파트']})
-        전세지수.append({"week": row['날짜'], "value": None})  # 전세지수 컬럼이 없으므로 None
+    for month in months:
+        row = recent_df[recent_df['년월'] == month]
+        if not row.empty:
+            value = row.iloc[-1]['종합']
+        else:
+            value = None
+        매매지수.append({"week": month, "value": value})
+        전세지수.append({"week": month, "value": None})  # 전세지수 컬럼이 없으므로 None
 
-    매매지수.reverse()
-    전세지수.reverse()
     return 매매지수, 전세지수
 
-def fetch_kbland_monthly(region_code):
+def fetch_kbland_monthly(region_code, region_name):
     kbland = Kbland()
     df = kbland.get_hai(region_code=region_code)
-    print(df.head()) # 데이터 구조 확인용
-
-    # 날짜 기준으로 최근 12개월만 추출 (여기서는 '종합'을 매매지수로 사용)
-    recent_df = df.sort_values('날짜', ascending=False).head(12)
+    print(df.head())
+    if region_name:
+        df = df[df['지역명'].str.contains(region_name)]
+    df['날짜'] = pd.to_datetime(df['날짜'])
+    df['년월'] = df['날짜'].dt.strftime('%Y-%m')
+    months = get_recent_months(12)
+    recent_df = df[df['년월'].isin(months)].sort_values('날짜')
     monthly_idx = []
-    for _, row in recent_df.iterrows():
-        monthly_idx.append({"month": row['날짜'], "value": row['아파트']})
-
-    monthly_idx.reverse()
+    for month in months:
+        row = recent_df[recent_df['년월'] == month]
+        if not row.empty:
+            value = row.iloc[-1]['종합']
+        else:
+            value = None
+        monthly_idx.append({"month": month, "value": value})
     return monthly_idx
 
 def fetch_transaction_volume(region_code, api_key):
-    # .env에서 공공데이터 API키 읽기
-    from dotenv import load_dotenv
-    load_dotenv()
-    PUBLICDATA_API_KEY = os.getenv("PUBLICDATA_API_KEY")
-    
     tp = TransactionPrice(api_key)
-    print(dir(TransactionPrice(PUBLICDATA_API_KEY)))
     # 최근 12개월 구하기
-    months = get_recent_months()
+    months = get_recent_months(12)
     start_month = months[0]
     end_month = months[-1]
     df = tp.get_data(
@@ -70,12 +87,15 @@ def fetch_transaction_volume(region_code, api_key):
         start_month=start_month,
         end_month=end_month
     )
-    print(df.head()) # 데이터 구조 확인
-
-    # '계약년월' 또는 '월' 컬럼 기준으로 거래량 집계 
+    print("컬럼명:", df.columns)
+    print(df.head())
+    if not df.empty:
+        df['년월'] = df['dealYear'].astype(str) + '-' + df['dealMonth'].astype(str).str.zfill(2)
+    else:
+        df['년월'] = []
     volumes = []
     for month in months:
-        count = df[df['계약년월'] == month].shape[0]  # 컬럼명은 실제 데이터에 맞게 수정
+        count = df[df['년월'] == month].shape[0]
         print(f"[DEBUG] {month} 거래량: {count}")
         volumes.append({"month": month, "value": count})
     return volumes
