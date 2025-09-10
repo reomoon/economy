@@ -20,59 +20,90 @@ def get_recent_months(num_months=12):
         months.append(month.strftime("%Y-%m"))
     return months
 
-def fetch_kbland_indices(region_code, region_name):
-    # print(f"[DEBUG] fetch_kbland_indices region_code:{region_code}")
-    kbland = Kbland()
-    df = kbland.get_hai(region_code = region_code)
-    print(df.head()) # 데이터 구조 확인용
-    print("날짜 min/max:", df['날짜'].min(), df['날짜'].max())
-    print("지역명:", df['지역명'].unique())
+def fetch_kb_weekly_price_index(region_code):
+    from PublicDataReader import Kbland
+    api = Kbland()
 
-    # 지역명 필터링
-    if region_name:
-        df = df[df['지역명'].str.contains(region_name)]
+    try:
+        # 주간 매매지수 데이터 가져오기
+        print("[DEBUG] API 호출 시작: region_code=", region_code)
+        price_df = api.get_price_index(
+            지역코드=region_code,
+            월간주간구분코드='02',  # 주간
+            매물종별구분='01',     # 아파트
+            매매전세코드='01'      # 매매
+        )
+        print("[DEBUG] API 호출 성공")
 
-    # 날짜 컬럼을 datetime으로 변환
-    df['날짜'] = pd.to_datetime(df['날짜'])
-    df['년월'] = df['날짜'].dt.strftime('%Y-%m')
+        if price_df is None:
+            print("[ERROR] API에서 데이터를 반환하지 않았습니다.")
+            return None
 
-    # 최근 12개월만 추출
-    months = get_recent_months(12)
-    recent_df = df[df['년월'].isin(months)].sort_values('날짜')
+        # 반환된 데이터프레임의 열 이름과 내용을 출력
+        print("[DEBUG] 반환된 데이터프레임 열 이름:")
+        print(price_df.columns)
+        print("[DEBUG] 반환된 데이터프레임 내용:")
+        print(price_df.head())
 
-    매매지수 = []
-    전세지수 = []
+        # 날짜 변환 및 최신 8주 데이터 필터링
+        if '날짜' in price_df.columns:
+            price_df['날짜'] = pd.to_datetime(price_df['날짜'])
+            price_df = price_df.sort_values('날짜', ascending=False).head(8)
 
-    for month in months:
-        row = recent_df[recent_df['년월'] == month]
-        if not row.empty:
-            value = row.iloc[-1]['종합']
+            print("[DEBUG] 최신 8주 주간 매매지수 데이터:")
+            print(price_df)
         else:
-            value = None
-        매매지수.append({"week": month, "value": value})
-        전세지수.append({"week": month, "value": None})  # 전세지수 컬럼이 없으므로 None
+            print("[ERROR] '날짜' 열이 데이터프레임에 없습니다.")
 
-    return 매매지수, 전세지수
+        return price_df
 
-def fetch_kbland_monthly(region_code, region_name):
-    kbland = Kbland()
-    df = kbland.get_hai(region_code=region_code)
-    print(df.head())
-    if region_name:
-        df = df[df['지역명'].str.contains(region_name)]
-    df['날짜'] = pd.to_datetime(df['날짜'])
-    df['년월'] = df['날짜'].dt.strftime('%Y-%m')
-    months = get_recent_months(12)
-    recent_df = df[df['년월'].isin(months)].sort_values('날짜')
-    monthly_idx = []
-    for month in months:
-        row = recent_df[recent_df['년월'] == month]
-        if not row.empty:
-            value = row.iloc[-1]['종합']
-        else:
-            value = None
-        monthly_idx.append({"month": month, "value": value})
-    return monthly_idx
+    except Exception as e:
+        print("[ERROR] API 호출 중 예외 발생:", e)
+        return None
+
+def fetch_kb_weekly_rent_index(region_code):
+    from PublicDataReader import Kbland
+    api = Kbland()
+
+    # 주간 전세지수 데이터 가져오기
+    rent_df = api.get_price_index(
+        지역코드=region_code,
+        월간주간구분코드='02',  # 주간
+        매물종별구분='01',      # 아파트
+        매매전세코드='02'       # 전세
+    )
+
+    # 날짜 변환 및 최신 8주 데이터 필터링
+    rent_df['날짜'] = pd.to_datetime(rent_df['날짜'])
+    rent_df = rent_df.sort_values('날짜', ascending=False).head(8)
+
+    print("[DEBUG] 최신 8주 주간 전세지수 데이터:")
+    print(rent_df)
+
+    return rent_df
+
+def fetch_kb_monthly_price_index(region_code):
+    from PublicDataReader import KBMarketIndex
+    api = KBMarketIndex()
+
+    # 월별 매매지수 데이터 가져오기
+    price_df = api.get_price_index(
+        지역코드=region_code,
+        월간주간구분코드='01',  # 월간
+        매물종별구분='01',      # 아파트
+        매매전세코드='01'       # 매매
+    )
+
+    # 날짜 변환 및 최신 12개월 데이터 필터링
+    price_df['날짜'] = pd.to_datetime(price_df['날짜'])
+    price_df['년월'] = price_df['날짜'].dt.strftime('%Y-%m')
+    recent_months = get_recent_months(12)
+    price_df = price_df[price_df['년월'].isin(recent_months)]
+
+    print("[DEBUG] 최신 12개월 월별 매매지수 데이터:")
+    print(price_df)
+
+    return price_df
 
 def fetch_transaction_volume(region_code, api_key):
     tp = TransactionPrice(api_key)

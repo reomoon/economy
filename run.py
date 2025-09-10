@@ -1,5 +1,5 @@
 import os
-from page.realestate import fetch_kbland_indices, fetch_kbland_monthly, fetch_transaction_volume
+from page.realestate import fetch_kb_weekly_price_index, fetch_kb_weekly_rent_index, fetch_kb_monthly_price_index, fetch_transaction_volume
 
 
 # Test Mode 설정($env:TEST_MODE="True" 강남구, 용산구만 수집)
@@ -57,8 +57,9 @@ PUBLICDATA_API_KEY = os.getenv("PUBLICDATA_API_KEY")
 for code, name in REGION_CODES.items():
     region_name = name.split()[-1]  # "서울 동작구" → "동작구"
     print(f"[INFO] {name}({code}) 데이터 수집 시작")
-    매매지수, 전세지수 = fetch_kbland_indices(code, region_name)
-    monthly_매매지수 = fetch_kbland_monthly(code, region_name)
+    매매지수 = fetch_kb_weekly_price_index(code)
+    전세지수 = fetch_kb_weekly_rent_index(code)
+    monthly_매매지수 = fetch_kb_monthly_price_index(code)
     거래량 = fetch_transaction_volume(code, PUBLICDATA_API_KEY)
     print(f"[DEBUG] {name} 매매지수(8주): {매매지수}")
     print(f"[DEBUG] {name} 전세지수(8주): {전세지수}")
