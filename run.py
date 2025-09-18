@@ -1,5 +1,20 @@
 import os
 from page.realestate import fetch_kb_weekly_price_index, fetch_kb_weekly_rent_index, fetch_kb_monthly_price_index, fetch_transaction_volume
+import requests
+"""
+requests의 모든 HTTP 요청에 User-Agent 헤더를 강제로 추가하는 코드 ---
+PublicDataReader 등에서 requests를 내부적으로 사용할 때도 User-Agent가 항상 포함되도록 함
+(일부 서버는 User-Agent가 없으면 차단하거나 오류를 반환할 수 있음)
+"""
+original_request = requests.Session.request  # requests의 원래 request 메서드 백업
+def patched_request(self, method, url, **kwargs):
+    # 기존 headers가 있으면 복사, 없으면 새로 생성
+    headers = kwargs.get("headers", {})
+    headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"  # User-Agent 강제 지정
+    kwargs["headers"] = headers
+    # 원래 request 메서드 호출 (User-Agent가 항상 포함됨)
+    return original_request(self, method, url, **kwargs)
+requests.Session.request = patched_request  # requests의 request 메서드를 패치
 
 
 # Test Mode 설정($env:TEST_MODE="True" 강남구, 용산구만 수집)
@@ -59,7 +74,7 @@ for code, name in REGION_CODES.items():
     print(f"[INFO] {name}({code}) 데이터 수집 시작")
     매매지수 = fetch_kb_weekly_price_index(code)
     전세지수 = fetch_kb_weekly_rent_index(code)
-    monthly_매매지수 = fetch_kb_monthly_price_index(code)
+    monthly_매매지수 = fetch_kb_monthly_price_index(code, PUBLICDATA_API_KEY)
     거래량 = fetch_transaction_volume(code, PUBLICDATA_API_KEY)
     print(f"[DEBUG] {name} 매매지수(8주): {매매지수}")
     print(f"[DEBUG] {name} 전세지수(8주): {전세지수}")

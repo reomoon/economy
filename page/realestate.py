@@ -82,9 +82,15 @@ def fetch_kb_weekly_rent_index(region_code):
 
     return rent_df
 
-def fetch_kb_monthly_price_index(region_code):
-    from PublicDataReader import KBMarketIndex
-    api = KBMarketIndex()
+def fetch_kb_monthly_price_index(region_code, api_key):
+    """
+    주어진 지역코드(region_code)와 API 키(api_key)로
+    최근 12개월 월별 KB 매매지수와 월별 거래량을 DataFrame으로 반환합니다.
+    - '거래량' 컬럼이 추가됨
+    """
+    from PublicDataReader import Kbland, TransactionPrice
+    api = Kbland()
+    tp = TransactionPrice(api_key)
 
     # 월별 매매지수 데이터 가져오기
     price_df = api.get_price_index(
@@ -93,40 +99,74 @@ def fetch_kb_monthly_price_index(region_code):
         매물종별구분='01',      # 아파트
         매매전세코드='01'       # 매매
     )
-
-    # 날짜 변환 및 최신 12개월 데이터 필터링
     price_df['날짜'] = pd.to_datetime(price_df['날짜'])
     price_df['년월'] = price_df['날짜'].dt.strftime('%Y-%m')
     recent_months = get_recent_months(12)
     price_df = price_df[price_df['년월'].isin(recent_months)]
 
-    print("[DEBUG] 최신 12개월 월별 매매지수 데이터:")
+    # 거래량 데이터 가져오기
+    months = get_recent_months(12)
+    start_month = months[0].replace("-", "")
+    end_month = months[-1].replace("-", "")
+    df = tp.get_data(
+        property_type="아파트",
+        trade_type="매매",
+        sigungu_code=region_code,
+        start_year_month=start_month,
+        end_year_month=end_month
+    )
+    if not df.empty:
+        df['년월'] = df['dealYear'].astype(str) + '-' + df['dealMonth'].astype(str).str.zfill(2)
+        volume_by_month = df.groupby('년월').size().to_dict()
+    else:
+        volume_by_month = {}
+
+    # 거래량 컬럼 추가
+    price_df['거래량'] = price_df['년월'].map(volume_by_month).fillna(0).astype(int)
+
+    print("[DEBUG] 최신 12개월 월별 매매지수 및 거래량 데이터:")
     print(price_df)
 
     return price_df
 
 def fetch_transaction_volume(region_code, api_key):
+    from PublicDataReader import Kbland, TransactionPrice
+    api = Kbland()
     tp = TransactionPrice(api_key)
-    # 최근 12개월 구하기
+
+    # 월별 매매지수 데이터 가져오기
+    price_df = api.get_price_index(
+        지역코드=region_code,
+        월간주간구분코드='01',  # 월간
+        매물종별구분='01',      # 아파트
+        매매전세코드='01'       # 매매
+    )
+    price_df['날짜'] = pd.to_datetime(price_df['날짜'])
+    price_df['년월'] = price_df['날짜'].dt.strftime('%Y-%m')
+    recent_months = get_recent_months(12)
+    price_df = price_df[price_df['년월'].isin(recent_months)]
+
+    # 거래량 데이터 가져오기
     months = get_recent_months(12)
-    start_month = months[0]
-    end_month = months[-1]
+    start_month = months[0].replace("-", "")
+    end_month = months[-1].replace("-", "")
     df = tp.get_data(
         property_type="아파트",
         trade_type="매매",
         sigungu_code=region_code,
-        start_month=start_month,
-        end_month=end_month
+        start_year_month=start_month,
+        end_year_month=end_month
     )
-    print("컬럼명:", df.columns)
-    print(df.head())
     if not df.empty:
         df['년월'] = df['dealYear'].astype(str) + '-' + df['dealMonth'].astype(str).str.zfill(2)
+        volume_by_month = df.groupby('년월').size().to_dict()
     else:
-        df['년월'] = []
-    volumes = []
-    for month in months:
-        count = df[df['년월'] == month].shape[0]
-        print(f"[DEBUG] {month} 거래량: {count}")
-        volumes.append({"month": month, "value": count})
-    return volumes
+        volume_by_month = {}
+
+    # 거래량 컬럼 추가
+    price_df['거래량'] = price_df['년월'].map(volume_by_month).fillna(0).astype(int)
+
+    print("[DEBUG] 최신 12개월 월별 매매지수 및 거래량 데이터:")
+    print(price_df)
+
+    return price_df
