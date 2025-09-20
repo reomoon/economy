@@ -1,0 +1,83 @@
+name: 부동산 데이터 자동 업데이트
+
+on:
+  schedule:
+    # 매일 오전 9시 (UTC 0시, 한국시간 9시)에 실행
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 수동 실행 가능
+  push:
+    branches: [ main ]
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Python 환경 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 캐시 pip 의존성
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: 의존성 설치
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas requests python-dotenv PublicDataReader
+        
+    - name: .env 파일 생성
+      run: |
+        echo "PUBLICDATA_API_KEY=${{ secrets.PUBLICDATA_API_KEY }}" > .env
+        echo "TEST_MODE=0" >> .env
+        
+    - name: 부동산 데이터 수집 및 HTML 생성
+      run: |
+        python run.py
+        
+    - name: HTML 파일 확인
+      run: |
+        ls -la html/
+        echo "=== main.html 파일 크기 ==="
+        du -h html/main.html
+        
+    - name: GitHub Pages 배포를 위한 설정
+      run: |
+        # index.html로 복사 (GitHub Pages 기본 파일)
+        cp html/main.html html/index.html
+        # CSS 파일이 올바른 위치에 있는지 확인
+        ls -la html/
+        
+    - name: 변경사항 커밋
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add html/
+        git diff --staged --quiet || git commit -m "🔄 부동산 데이터 자동 업데이트 $(date +'%Y-%m-%d %H:%M:%S')"
+        
+    - name: 변경사항 푸시
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+        
+    - name: 성공 알림
+      if: success()
+      run: |
+        echo "✅ 부동산 데이터 업데이트 완료!"
+        echo "📊 업데이트된 지역: 34개"
+        echo "🌐 GitHub Pages에서 확인 가능"
+        
+    - name: 실패 알림
+      if: failure()
+      run: |
+        echo "❌ 부동산 데이터 업데이트 실패"
+        echo "로그를 확인하여 문제를 해결하세요."
