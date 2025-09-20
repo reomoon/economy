@@ -1,37 +1,263 @@
-<h2>부동산</h2>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>부동산 데이터 | 가격지수 현황</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>KB 부동산 가격지수 현황 <span class="badge latest">실시간</span></h1>
+        </div>
+    </div>
+    <div class="container">
 
-<h3>매매지수</h3>
-<table border='1'>
-    <tr>
-        <th>지역</th>
-        <th>매매지수</th>
-    </tr>
-    <!-- 매매지수 데이터 행 -->
-</table>
+        <section class="table-section">
+            <h2>매매지수 (주간)</h2>
+            <div class="table-container">
+                <table class="price-index-table cross-table">
+                    <thead>
+                        <tr>
+                            <th>지역명</th>
+                            <th>2025-09-15</th>
+                            <th>2025-09-08</th>
+                            <th>2025-09-01</th>
+                            <th>2025-08-25</th>
+                            <th>2025-08-18</th>
+                            <th>2025-08-11</th>
+                            <th>2025-08-04</th>
+                            <th>2025-07-28</th>
 
-<h3>전세지수</h3>
-<table border='1'>
-    <tr>
-        <th>지역</th>
-        <th>전세지수</th>
-    </tr>
-    <!-- 전세지수 데이터 행 -->
-</table>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-<h3>월간 매매지수</h3>
-<table border='1'>
-    <tr>
-        <th>지역</th>
-        <th>월</th>
-    </tr>
-    <!-- 매매지수 데이터 행 -->
-</table>
+                        <tr>
+                            <td class="region-cell">서울 강남구</td>
+                            <td>105.48</td>
+                            <td>105.23</td>
+                            <td>105.02</td>
+                            <td>104.79</td>
+                            <td>104.63</td>
+                            <td>104.47</td>
+                            <td>104.27</td>
+                            <td>104.11</td>
+                        </tr>
 
-<h3>거래량</h3>
-<table border='1'>
-    <tr>
-        <th>지역</th>
-        <th>거래량</th>
-    </tr>
-    <!-- 거래량 데이터 행 -->
-</table>
+                        <tr>
+                            <td class="region-cell">서울 용산구</td>
+                            <td>93.31</td>
+                            <td>93.14</td>
+                            <td>93.00</td>
+                            <td>92.89</td>
+                            <td>92.78</td>
+                            <td>92.70</td>
+                            <td>92.65</td>
+                            <td>92.59</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <h2>전세지수 (주간)</h2>
+            <div class="table-container">
+                <table class="jeonse-index-table cross-table">
+                    <thead>
+                        <tr>
+                            <th>지역명</th>
+                            <th>2025-09-15</th>
+                            <th>2025-09-08</th>
+                            <th>2025-09-01</th>
+                            <th>2025-08-25</th>
+                            <th>2025-08-18</th>
+                            <th>2025-08-11</th>
+                            <th>2025-08-04</th>
+                            <th>2025-07-28</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="region-cell">서울 강남구</td>
+                            <td>94.42</td>
+                            <td>94.32</td>
+                            <td>94.22</td>
+                            <td>94.11</td>
+                            <td>94.05</td>
+                            <td>93.98</td>
+                            <td>93.92</td>
+                            <td>93.87</td>
+                        </tr>
+
+                        <tr>
+                            <td class="region-cell">서울 용산구</td>
+                            <td>93.62</td>
+                            <td>93.58</td>
+                            <td>93.50</td>
+                            <td>93.42</td>
+                            <td>93.37</td>
+                            <td>93.31</td>
+                            <td>93.23</td>
+                            <td>93.16</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <h2>월간 매매지수</h2>
+            <div class="table-container">
+                <table class="monthly-index-table cross-table">
+                    <thead>
+                        <tr>
+                            <th>지역명</th>
+                            <th>2025-08</th>
+                            <th>2025-07</th>
+                            <th>2025-06</th>
+                            <th>2025-05</th>
+                            <th>2025-04</th>
+                            <th>2025-03</th>
+                            <th>2025-02</th>
+                            <th>2025-01</th>
+                            <th>2024-12</th>
+                            <th>2024-11</th>
+                            <th>2024-10</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="region-cell">서울 강남구</td>
+                            <td>104.47</td>
+                            <td>103.65</td>
+                            <td>102.12</td>
+                            <td>100.07</td>
+                            <td>99.15</td>
+                            <td>97.73</td>
+                            <td>96.72</td>
+                            <td>96.59</td>
+                            <td>96.49</td>
+                            <td>96.18</td>
+                            <td>95.83</td>
+                        </tr>
+
+                        <tr>
+                            <td class="region-cell">서울 용산구</td>
+                            <td>92.70</td>
+                            <td>92.36</td>
+                            <td>91.41</td>
+                            <td>90.74</td>
+                            <td>90.50</td>
+                            <td>90.08</td>
+                            <td>89.89</td>
+                            <td>89.91</td>
+                            <td>89.89</td>
+                            <td>89.76</td>
+                            <td>89.58</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <h2>거래량 (월간)</h2>
+            <div class="table-container">
+                <table class="volume-table cross-table">
+                    <thead>
+                        <tr>
+                            <th>지역명</th>
+                            <th>2025-09</th>
+                            <th>2025-08</th>
+                            <th>2025-07</th>
+                            <th>2025-06</th>
+                            <th>2025-05</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="region-cell">서울 강남구</td>
+                            <td>890건</td>
+                            <td>832건</td>
+                            <td>793건</td>
+                            <td>774건</td>
+                            <td>825건</td>
+                        </tr>
+
+                        <tr>
+                            <td class="region-cell">서울 용산구</td>
+                            <td>606건</td>
+                            <td>598건</td>
+                            <td>652건</td>
+                            <td>610건</td>
+                            <td>623건</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+    
+    <script>
+        // 페이지 로드 완료 시 애니메이션 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.table-section');
+            sections.forEach((section, index) => {
+                section.style.animationDelay = (index * 0.1) + 's';
+            });
+            
+            // 100 이상 지수를 빨간색으로 표시
+            const allCells = document.querySelectorAll('.cross-table td:not(.region-cell)');
+            allCells.forEach(cell => {
+                const text = cell.textContent.trim();
+                // 숫자만 추출 (105.48, 1,369건 등에서)
+                const numberMatch = text.match(/(\d+\.?\d*)/);
+                if (numberMatch) {
+                    const value = parseFloat(numberMatch[1]);
+                    // 거래량이 아닌 지수 데이터만 체크 (100 이상이면서 건수가 아닌 경우)
+                    if (value >= 100 && !text.includes('건')) {
+                        cell.classList.add('high-value');
+                    }
+                }
+            });
+            
+            // 최신 데이터 하이라이트 (첫 번째 행)
+            const firstRows = document.querySelectorAll('.cross-table tbody tr:first-child');
+            firstRows.forEach(row => {
+                row.style.background = 'linear-gradient(90deg, rgba(3, 199, 90, 0.1), rgba(0, 179, 71, 0.1))';
+            });
+        });
+        
+        // 테이블 호버 효과 개선
+        document.querySelectorAll('.table-container').forEach(container => {
+            container.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 12px 30px rgba(0,0,0,0.15)';
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+            });
+        });
+    </script>
+</body>
+</html>

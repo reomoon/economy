@@ -1,0 +1,756 @@
+/* 네이버 스타일 부동산 데이터 대시보드 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+/* 전체 페이지 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f7f9fc;
+    color: #333;
+    line-height: 1.5;
+    font-size: 14px;
+    /* 모바일 최적화 */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overflow-x: hidden;
+}
+
+/* 헤더 영역 */
+.header {
+    background: #fff;
+    border-bottom: 1px solid #e4e8eb;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 메인 제목 */
+h1 {
+    color: #1e2124;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin: 30px 0;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #03c75a, #00b347);
+    margin: 15px auto 0;
+    border-radius: 2px;
+}
+
+/* 지역 섹션 */
+.region-section {
+    background: #fff;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid #e4e8eb;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.region-section h2 {
+    background: linear-gradient(135deg, #03c75a 0%, #00b347 100%);
+    color: #fff;
+    padding: 20px 24px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    border: none;
+    position: relative;
+}
+
+.region-section h2::before {
+    content: '📍';
+    margin-right: 8px;
+}
+
+/* 데이터 테이블 영역 */
+.data-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    padding: 24px;
+}
+
+/* 테이블 컨테이너 */
+.table-container {
+    border-radius: 8px;
+    border: 1px solid #e4e8eb;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* 가로 스크롤 활성화 */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+.table-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.table-container h3 {
+    background: #f8f9fa;
+    padding: 16px 20px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 1px solid #e4e8eb;
+    position: relative;
+}
+
+/* 테이블 스타일 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e9ecef;
+}
+
+td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f3f4;
+    font-weight: 400;
+    color: #495057;
+}
+
+/* 테이블 행 스타일 */
+tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 매매지수 테이블 특화 스타일 */
+.price-index-table th {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: #fff;
+}
+
+.price-index-table .table-container h3::before {
+    content: '📈';
+    margin-right: 8px;
+}
+
+/* 전세지수 테이블 특화 스타일 */
+.jeonse-index-table th {
+    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+    color: #fff;
+}
+
+.jeonse-index-table .table-container h3::before {
+    content: '🏠';
+    margin-right: 8px;
+}
+
+/* 월간지수 테이블 특화 스타일 */
+.monthly-index-table th {
+    background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+    color: #fff;
+}
+
+.monthly-index-table .table-container h3::before {
+    content: '📊';
+    margin-right: 8px;
+}
+
+/* 거래량 테이블 특화 스타일 */
+.volume-table th {
+    background: linear-gradient(135deg, #9775fa 0%, #7950f2 100%);
+    color: #fff;
+}
+
+.volume-table .table-container h3::before {
+    content: '💼';
+    margin-right: 8px;
+}
+
+/* 숫자 데이터 강조 */
+td:last-child {
+    font-weight: 500;
+    text-align: right;
+}
+
+/* 최신 데이터 하이라이트 */
+tbody tr:last-child {
+    background: linear-gradient(90deg, rgba(3, 199, 90, 0.05), rgba(0, 179, 71, 0.05));
+    font-weight: 500;
+}
+
+tbody tr:last-child td:last-child {
+    color: #03c75a;
+    font-weight: 600;
+}
+
+/* 네이버 스타일 뱃지 */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #03c75a;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.badge.latest {
+    background: #ff6b6b;
+}
+
+/* 로딩 상태 */
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #868e96;
+}
+
+.loading::before {
+    content: '⏳';
+    display: block;
+    font-size: 32px;
+    margin-bottom: 16px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+    
+    .data-tables {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    h1 {
+        font-size: 22px;
+        margin: 15px 0;
+    }
+    
+    .region-section h2 {
+        font-size: 16px;
+        padding: 14px 18px;
+    }
+    
+    .table-container h3 {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    
+    th, td {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    /* 모바일에서 버튼형 인터랙션 */
+    .table-container {
+        transition: all 0.3s ease;
+    }
+    
+    .table-container:active {
+        transform: scale(0.98);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .data-tables {
+        padding: 10px;
+        gap: 12px;
+    }
+    
+    h1 {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+    
+    /* 더 큰 터치 영역 */
+    .region-section h2 {
+        padding: 16px 20px;
+        font-size: 15px;
+    }
+}
+
+/* 스크롤바 스타일 (웹킷 브라우저) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f3f4;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #bdc1c6;
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.region-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* 포커스 스타일 */
+.table-container:focus-within {
+    outline: 2px solid #03c75a;
+    outline-offset: 2px;
+}
+
+/* 크로스 테이블 (날짜 x 지역) 스타일 */
+.cross-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 13px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cross-table th {
+    background: linear-gradient(135deg, #e8e9ea, #d5d6d7);
+    color: #333;
+    font-weight: 600;
+    padding: 14px 10px;
+    text-align: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    position: relative;
+}
+
+.cross-table th:first-child {
+    min-width: 120px;
+    background: linear-gradient(135deg, #9e9e9e, #757575);
+    color: white;
+    text-align: left;
+    padding-left: 16px;
+    position: sticky;
+    left: 0;
+    z-index: 20;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.cross-table th:last-child {
+    border-right: none;
+}
+
+.cross-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #f1f3f4;
+    border-right: 1px solid #f1f3f4;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+    position: relative;
+}
+
+/* 100 이상 지수를 빨간색으로 표시 */
+.cross-table td.high-value {
+    color: #d32f2f;
+    font-weight: 600;
+    background: rgba(211, 47, 47, 0.05);
+}
+
+.cross-table td.region-cell {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+    border-right: 1px solid #e2e3e9;
+    min-width: 120px;
+    text-align: left;
+    padding-left: 16px;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+.cross-table td:last-child {
+    border-right: none;
+}
+
+.cross-table tbody tr:hover {
+    background-color: rgba(3, 199, 90, 0.05);
+}
+
+.cross-table tbody tr:hover td.region-cell {
+    background-color: rgba(3, 199, 90, 0.1);
+}
+
+/* 테이블 섹션 스타일 */
+.table-section {
+    margin: 40px 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.table-section h2 {
+    color: #2c3e50;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #03c75a;
+    display: inline-block;
+}
+
+/* 특정 테이블 유형별 색상 */
+/* 모든 테이블 헤더를 연한 그레이로 통일 */
+.price-index-table.cross-table th:not(:first-child),
+.jeonse-index-table.cross-table th:not(:first-child),
+.monthly-index-table.cross-table th:not(:first-child),
+.volume-table.cross-table th:not(:first-child) {
+    background: linear-gradient(135deg, #9e9e9e, #757575);
+    color:white;
+}
+
+/* 반응형 디자인 - 크로스 테이블용 */
+@media (max-width: 1024px) {
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .cross-table {
+        min-width: 800px;
+        font-size: 11px;
+    }
+    
+    .cross-table th,
+    .cross-table td {
+        padding: 8px 6px;
+        min-width: 70px;
+    }
+    
+    .cross-table th:first-child {
+        min-width: 100px;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+    }
+    
+    .cross-table td.region-cell {
+        min-width: 100px;
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .data-tables {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    h1 {
+        font-size: 20px;
+        margin: 15px 0;
+    }
+    
+    .region-section h2 {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+    
+    .table-container h3 {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+    
+    .cross-table {
+        min-width: 600px;
+        font-size: 10px;
+    }
+    
+    .cross-table th,
+    .cross-table td {
+        min-width: 55px;
+        font-size: 10px;
+        padding: 6px 4px;
+    }
+    
+    .cross-table th:first-child {
+        min-width: 90px;
+        font-size: 9px;
+        padding-left: 8px;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #9e9e9e, #757575) !important;
+    }
+    
+    .cross-table td.region-cell {
+        min-width: 90px;
+        font-size: 9px;
+        padding-left: 8px;
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        background: #f8f9fa !important;
+    }
+    
+    .table-section h2 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    
+    .table-section {
+        margin: 25px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 8px;
+    }
+    
+    .header {
+        padding: 10px 0;
+    }
+    
+    h1 {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+    
+    .data-tables {
+        padding: 8px;
+        gap: 12px;
+    }
+    
+    .table-container {
+        border-radius: 6px;
+    }
+    
+    .cross-table {
+        min-width: 500px;
+        font-size: 9px;
+    }
+    
+    .cross-table th,
+    .cross-table td {
+        min-width: 45px;
+        font-size: 9px;
+        padding: 4px 3px;
+    }
+    
+    .cross-table th:first-child {
+        min-width: 80px;
+        font-size: 8px;
+        padding-left: 6px;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+        background: linear-gradient(135deg, #9e9e9e, #757575) !important;
+    }
+    
+    .cross-table td.region-cell {
+        min-width: 80px;
+        font-size: 8px;
+        padding-left: 6px;
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+        background: #f8f9fa !important;
+    }
+    
+    .table-section h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .table-section {
+        margin: 20px 0;
+    }
+    
+    /* 모바일에서 테이블 스크롤 힌트 */
+    .table-container::after {
+        /* content: '← 좌우로 스크롤하세요 →'; */
+        display: block;
+        text-align: center;
+        color: #999;
+        font-size: 8px;
+        padding: 5px;
+        background: #f5f5f5;
+        border-top: 1px solid #eee;
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (max-width: 768px) and (pointer: coarse) {
+    .cross-table th,
+    .cross-table td {
+        min-height: 32px;
+        line-height: 1.2;
+    }
+    
+    .table-container:hover {
+        transform: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 모바일에서 호버 효과 비활성화 */
+    .cross-table tbody tr:hover {
+        background-color: transparent;
+    }
+    
+    /* 터치 영역 확장 */
+    .cross-table td {
+        position: relative;
+    }
+}
+
+/* 가로 스크롤 표시 개선 */
+@media (max-width: 768px) {
+    .table-container {
+        position: relative;
+    }
+    
+    .table-container::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f3f4;
+        border-radius: 3px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: #03c75a;
+        border-radius: 3px;
+    }
+}
+
+/* 매우 작은 화면 (320px 이하) */
+@media (max-width: 320px) {
+    .container {
+        padding: 0 5px;
+    }
+    
+    h1 {
+        font-size: 16px;
+        margin: 8px 0;
+    }
+    
+    .cross-table {
+        min-width: 400px;
+        font-size: 8px;
+    }
+    
+    .cross-table th,
+    .cross-table td {
+        min-width: 40px;
+        font-size: 8px;
+        padding: 3px 2px;
+    }
+    
+    .cross-table th:first-child {
+        min-width: 70px;
+        font-size: 7px;
+        padding-left: 4px;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(135deg, #9e9e9e, #757575) !important;
+    }
+    
+    .cross-table td.region-cell {
+        min-width: 70px;
+        font-size: 7px;
+        padding-left: 4px;
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
+        background: #f8f9fa !important;
+    }
+    
+    .table-section h2 {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+}
