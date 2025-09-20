@@ -100,7 +100,7 @@ def fetch_kb_weekly_price_index(region_code):
             
             if target_region_name and '지역명' in price_df.columns:
                 print(f"[DEBUG] 지역명으로 필터링 시도: {target_region_name}")
-                filtered_df = price_df[price_df['지역명'].str.contains(target_region_name, na=False)]
+                filtered_df = price_df[price_df['지역명'].str.contains(target_region_name, na=False)].copy()
                 
                 if not filtered_df.empty:
                     filtered_df['날짜'] = pd.to_datetime(filtered_df['날짜'])
@@ -157,7 +157,7 @@ def fetch_kb_weekly_rent_index(region_code):
             target_region_name = region_name_mapping.get(region_code)
             
             if target_region_name and '지역명' in price_df.columns:
-                filtered_df = price_df[price_df['지역명'].str.contains(target_region_name, na=False)]
+                filtered_df = price_df[price_df['지역명'].str.contains(target_region_name, na=False)].copy()
                 
                 if not filtered_df.empty:
                     filtered_df['날짜'] = pd.to_datetime(filtered_df['날짜'])
