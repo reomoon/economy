@@ -157,7 +157,7 @@ def create_simple_html_report(results, stock_data=None):
 <body>
     <div class="header">
         <div class="container">
-            <h1>📈 주식 & 🏠 부동산 통합 현황 <span class="badge latest">실시간</span></h1>
+            <h1> 부동산 및 주식 현황 </h1>
         </div>
     </div>
     <div class="container">
@@ -167,7 +167,7 @@ def create_simple_html_report(results, stock_data=None):
     if stock_data:
         html += f'''
         <section class="table-section">
-            <h2>📈 Stock 데이터</h2>
+            <h2> Stock 데이터</h2>
             <div class="table-container">
                 {stock_data}
             </div>
