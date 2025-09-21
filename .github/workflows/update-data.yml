@@ -45,22 +45,24 @@ jobs:
         
     - name: HTML 파일 확인
       run: |
-        ls -la html/
+        ls -la
         echo "=== main.html 파일 크기 ==="
-        du -h html/main.html
+        du -h main.html
+        echo "=== style.css 파일 확인 ==="
+        ls -la style.css
         
     - name: GitHub Pages 배포를 위한 설정
       run: |
         # index.html로 복사 (GitHub Pages 기본 파일)
-        cp html/main.html html/index.html
-        # CSS 파일이 올바른 위치에 있는지 확인
-        ls -la html/
+        cp main.html index.html
+        # 파일 목록 확인
+        ls -la *.html *.css
         
     - name: 변경사항 커밋
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add html/
+        git add main.html index.html style.css
         git diff --staged --quiet || git commit -m "🔄 부동산 데이터 자동 업데이트 $(date +'%Y-%m-%d %H:%M:%S')"
         
     - name: 변경사항 푸시

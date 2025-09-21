@@ -289,8 +289,8 @@ def fetch_kb_transaction_volume_simple(region_code):
         
         base_volume = base_volumes.get(region_code, 500)  # 기본값 500
         
-        # 최근 5개월 데이터 생성
-        months = get_recent_months(5)
+        # 최근 12개월 데이터 생성
+        months = get_recent_months(12)
         volume_data = []
         
         for i, month in enumerate(months):

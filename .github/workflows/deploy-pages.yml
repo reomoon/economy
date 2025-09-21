@@ -4,7 +4,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'html/**'
+      - 'main.html'
+      - 'style.css'
   workflow_dispatch:
 
 permissions:
@@ -29,9 +30,11 @@ jobs:
       - name: HTML 파일 준비
         run: |
           mkdir -p _site
-          cp -r html/* _site/
+          # 루트의 main.html과 style.css를 _site로 복사
+          cp main.html _site/
+          cp style.css _site/
           # main.html을 index.html로 복사 (기본 페이지)
-          cp html/main.html _site/index.html
+          cp main.html _site/index.html
           ls -la _site/
           
       - name: 아티팩트 업로드

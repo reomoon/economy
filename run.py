@@ -1,6 +1,7 @@
 import os
 import requests
 from page.realestate import *
+from page.market import stock
 """
 requests의 모든 HTTP 요청에 User-Agent 헤더를 강제로 추가하는 코드 ---
 PublicDataReader 등에서 requests를 내부적으로 사용할 때도 User-Agent가 항상 포함되도록 함
@@ -23,7 +24,16 @@ PUBLICDATA_API_KEY = os.getenv("PUBLICDATA_API_KEY")
 
 def main():
     """메인 실행 함수"""
-    print("[INFO] KB 부동산 데이터 수집 시작")
+    print("[INFO] Stock & KB 부동산 데이터 수집 시작")
+    
+    # Stock 데이터 수집 (맨 위에 추가)
+    try:
+        print("\n[INFO] === Stock 데이터 수집 시작 ===")
+        stock_data = stock()
+        print("[SUCCESS] Stock 데이터 수집 완료")
+    except Exception as e:
+        print(f"[ERROR] Stock 데이터 수집 실패: {e}")
+        stock_data = None
     
     # 테스트 모드 확인
     test_mode = os.getenv("TEST_MODE", "0") == "1"
@@ -110,12 +120,18 @@ def main():
     # HTML 보고서 생성
     if results:
         try:
-            # 간단한 HTML 생성
-            html_content = create_simple_html_report(results)
+            # Stock 데이터를 포함한 HTML 생성
+            html_content = create_simple_html_report(results, stock_data)
             
             # HTML 파일로 저장
             with open('main.html', 'w', encoding='utf-8') as f:
                 f.write(html_content)
+            
+            # CSS 파일을 루트에 복사 (GitHub Pages용)
+            import shutil
+            if os.path.exists('html/style.css'):
+                shutil.copy('html/style.css', 'style.css')
+                print("[INFO] CSS 파일을 루트에 복사 완료")
             
             print(f"\n[INFO] ✅ HTML 보고서 생성 완료: main.html")
             print(f"[INFO] 수집된 지역: {len(results)}개")
@@ -124,8 +140,8 @@ def main():
     else:
         print("[WARNING] 수집된 데이터가 없어 HTML 보고서를 생성할 수 없습니다.")
 
-def create_simple_html_report(results):
-    """네이버 스타일 HTML 보고서 생성 - 날짜(행) x 지역(열) 구조"""
+def create_simple_html_report(results, stock_data=None):
+    """네이버 스타일 HTML 보고서 생성 - Stock + 부동산 데이터"""
     html = '''<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -134,17 +150,28 @@ def create_simple_html_report(results):
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>부동산 데이터 | 가격지수 현황</title>
+    <title>주식 & 부동산 데이터 | 통합 현황</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
     <div class="header">
         <div class="container">
-            <h1>KB 부동산 가격지수 현황 <span class="badge latest">실시간</span></h1>
+            <h1>📈 주식 & 🏠 부동산 통합 현황 <span class="badge latest">실시간</span></h1>
         </div>
     </div>
     <div class="container">
+'''
+    
+    # Stock 데이터 먼저 표시 (맨 위에)
+    if stock_data:
+        html += f'''
+        <section class="table-section">
+            <h2>📈 Stock 데이터</h2>
+            <div class="table-container">
+                {stock_data}
+            </div>
+        </section>
 '''
     
     if not results:
