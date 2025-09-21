@@ -114,11 +114,10 @@ def main():
             html_content = create_simple_html_report(results)
             
             # HTML 파일로 저장
-            os.makedirs('html', exist_ok=True)
-            with open('html/main.html', 'w', encoding='utf-8') as f:
+            with open('main.html', 'w', encoding='utf-8') as f:
                 f.write(html_content)
             
-            print(f"\n[INFO] ✅ HTML 보고서 생성 완료: html/main.html")
+            print(f"\n[INFO] ✅ HTML 보고서 생성 완료: main.html")
             print(f"[INFO] 수집된 지역: {len(results)}개")
         except Exception as e:
             print(f"[ERROR] HTML 보고서 생성 실패: {e}")
